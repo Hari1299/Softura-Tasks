@@ -1,0 +1,128 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<h1 style="background-color:bisque">Employee Info</h1>
+<br/>
+<div>
+<label>FirstName</label>
+<input type="text" name="FirstName" id="FirstName"/>
+</div>
+<br/>
+<div>
+<label>LastName</label>
+<input type="text" name="LastName" id="LastName" />
+</div>
+<br/>
+<div>
+    <label>Email</label>
+    <input type="text" name="Email" id="Email" />
+    <span id="first"></span>
+</div>
+<br/>
+<div>
+    <label>Gender :</label>
+    <br/>
+    <input type="radio" name="gender" id="male" value="male" />Male
+    <br/>
+    <input type="radio" name="gender" id="female" value="female" />Female
+</div>
+<br/>
+<div>
+    <label>Skills :</label>
+    <br/>
+    <input type="checkbox" class="skillset" name="C#" id="C#" value="C#" />C#
+    <br/>
+    <input type="checkbox" class="skillset" name="AWS" id="AWS" value="AWS" />AWS
+    <br/>
+    <input type="checkbox" class="skillset" name="NodeJS" id="NodeJS" value="NodeJS" />NodeJS
+    <br/>
+    <input type="checkbox" class="skillset" name="Python" id="Python" value="Python" />Python
+    <br/>
+
+</div>
+<br/>
+<input type="button" value="Save" onclick="save()" />
+
+<div>
+    <table class="table table-bordered table-striped table-hover" hidden>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Gender</th>
+            <th>Skills</th>
+        </tr>
+        <tr>
+            <td id="Firstname"></td>
+            <td id="Lastname"></td>
+            <td id="email"></td>
+            <td id="Gender"></td> 
+            <td id="skills"></td>
+        </tr>
+</table>
+    </div>
+<br/>
+        <script>
+            function save() {
+
+                //alert($("#FirstName").val());
+                var selectedGender = $("#male").prop('checked');
+                var selectedSkills = [];
+                $(".skillset:checked").each(function (item) {
+                    selectedSkills.push(this.value+ " ");
+                });
+
+                var object = {
+                    Firstname: $("#FirstName").val(),
+                    Lastname: $("#LastName").val(),
+                    Email: $("#Email").val(),
+                    Gender: $("input[name='gender']:checked").val(),
+                    Skills: selectedSkills,
+                };
+
+                $.ajax({
+
+                    type: "POST",
+
+                    url: "home/SaveEmployeeInfo",
+
+                    data: object,
+
+                    dataType: 'json',
+
+                    success: function (resp) {
+                        debugger
+                       
+                        var FirstName = resp.firstName;
+                        var LastName = resp.lastName;
+                        var Email = resp.email;
+                        var Gender = resp.gender;
+                        var Skills = resp.skills;
+                        if (Email == undefined) {
+                            $("#first").html("Invalid Email");
+                        }
+                        //console.log(resp);
+                        else {
+                            displayvalue(FirstName, LastName, Email, Gender, Skills);
+                        }
+                    },
+                    error: function (resp) {
+
+                        alert("Error occured");
+                    }
+
+                });
+            }
+            function displayvalue(FirstName, LastName, Email, Gender , Skills) {
+               
+                $("table").removeAttr("hidden");
+                $("#Firstname").html(FirstName);
+                $("#Lastname").html(LastName);
+                $("#email").html(Email);
+                $("#Gender").html(Gender);
+                $("#skills").html(Skills);
+            }
+        </script>
